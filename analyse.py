@@ -90,7 +90,6 @@ def generate_follower_list(filename, follower_count):
        tab, returns a dictionary of followers.
        Dict entries are of the form {uid:(username, name)}.
     '''
-    print("Location: " + filename)
     string = extract_str(filename)
     while len(string) < 3:
         input("Please populate input.txt, then press enter.")
@@ -153,10 +152,6 @@ def generate_report(followers, username, save=True):
     unfollowers = old_followers_uids.difference(followers_uids)
     any_changes = (set(followers.items()).symmetric_difference(set(old_followers.items())))
     changed_name_users = set([u[0] for u in any_changes]).difference(new_followers).difference(unfollowers)
-
-    print(old_followers)    
-    print("STOP")
-    print(followers)
     
     ##print('Followers:', followers, '\n\nOld followers:', old_followers)
     ##print("\nNew followers:", new_followers, '\n\nUnfollowers:', unfollowers)
@@ -227,8 +222,8 @@ def prompt_user_to_copy_and_paste_followers(username, follower_count):
         follower_count_str = str(follower_count)
     input('Please click ' + follower_count_str + ' followers, then scroll to the bottom. Ctrl+A, then Ctrl+C, then come back here and press the Enter key.')
     
+    webbrowser.open(root_dir + filename) #open input text file    
     input('Now (in this text document) Ctrl+V, then Ctrl+S. If a popup pops up, press OK. Then come back here and press the Enter key.')
-    webbrowser.open(root_dir + filename) #open input text file
     
     
 def get_details(username, detail):
