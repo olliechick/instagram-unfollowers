@@ -90,7 +90,6 @@ def generate_follower_list(filename, follower_count):
        tab, returns a dictionary of followers.
        Dict entries are of the form {uid:(username, name)}.
     '''
-    print("Location: " + filename)
     string = extract_str(filename)
     while len(string) < 3:
         input("Please populate input.txt, then press enter.")
@@ -226,8 +225,8 @@ def prompt_user_to_copy_and_paste_followers(username, follower_count):
         follower_count_str = str(follower_count)
     input('Please click ' + follower_count_str + ' followers, then scroll to the bottom. Ctrl+A, then Ctrl+C, then come back here and press the Enter key.')
     
+    webbrowser.open(root_dir + filename) #open input text file    
     input('Now (in this text document) Ctrl+V, then Ctrl+S. If a popup pops up, press OK. Then come back here and press the Enter key.')
-    webbrowser.open(root_dir + filename) #open input text file
     
     
 def get_details(username, detail):
