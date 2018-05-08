@@ -151,7 +151,7 @@ def main():
     global root_dir
         
     username = getUsername()
-    password = getPassword()
+    password = getPassword() #TODO use config file
     print("Loading.")
     api = InstagramAPI(username, password)
     api.login()
