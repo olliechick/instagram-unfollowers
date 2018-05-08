@@ -104,6 +104,10 @@ def generate_follower_list(filename, follower_count):
     followers = {}
     f = [None, None]
     
+    if len(follower_blocks) != follower_count:
+        print("Note that there are actually {} followers, not {}.".format(len(follower_blocks), follower_count))
+        follower_count = len(follower_blocks)
+    
     i=1
     for follower in follower_blocks:
         items = follower.split('\n')
@@ -129,7 +133,7 @@ def generate_follower_list(filename, follower_count):
             if (follower_count == -1):
                 print('Processing user {}: {} ({})'.format(i_s, name, username))
             else:
-                print('Processing user {}/{} ({}%): {} ({})'.format(i_s, follower_count, percent, name, username))
+                print('Processing user {}/{} ({}%): {} ({})'.format(i_s, len(follower_blocks), percent, name, username))
             followers.update({uid:(username, name)})
             i += 1
             
@@ -146,17 +150,12 @@ def generate_report(followers, username, save=True):
     report_filename = 'Report generated ' + current_datetime + '.txt'
     
     old_followers = extract_dict(root_dir + username + '/' + DEFAULT_FOLLOWERS_FILENAME)
-    print(root_dir + username + '/' + DEFAULT_FOLLOWERS_FILENAME)
     old_followers_uids = set(old_followers.keys())
     followers_uids = set(followers.keys())
     new_followers = followers_uids.difference(old_followers_uids)
     unfollowers = old_followers_uids.difference(followers_uids)
     any_changes = (set(followers.items()).symmetric_difference(set(old_followers.items())))
     changed_name_users = set([u[0] for u in any_changes]).difference(new_followers).difference(unfollowers)
-
-    print(old_followers)    
-    print("STOP")
-    print(followers)
     
     ##print('Followers:', followers, '\n\nOld followers:', old_followers)
     ##print("\nNew followers:", new_followers, '\n\nUnfollowers:', unfollowers)
@@ -255,43 +254,41 @@ def get_details(username, detail):
             null = None
             ##print('\n\n\nLoading', url, '\n\n\n')
             ##print(myfile.text)
-            try:
-                false = False
-                null = None
-                true = True
-                ##print(myfile.text)
-                starts = ["<script type=\"text/javascript\">window._sharedData = ['", "<script type=\"text/javascript\">window._sharedData = "]
-                ends = [";</script>", "', '</script>", "', </script>"]
-                i = 1
-                total = len(starts)*len(ends)
-                gotit = False
-                for start in starts:
-                    for end in ends:
-                        try:
-                            string = myfile.text.split(start)[1].split(end)[0]
-                            ##print(string)
-                            if not gotit:
-                                user = eval(string)['entry_data']['ProfilePage'][0]['graphql']['user']
-                                gotit = True
-                        except:
-                            pass
-                        i += 1
+            
+            false = False
+            null = None
+            true = True
+            ##print(myfile.text)
+            starts = ["<script type=\"text/javascript\">window._sharedData = ['", "<script type=\"text/javascript\">window._sharedData = "]
+            ends = [";</script>", "', '</script>", "', </script>"]
+            i = 1
+            total = len(starts)*len(ends)
+            gotit = False
+            for start in starts:
+                for end in ends:
+                    try:
+                        string = myfile.text.split(start)[1].split(end)[0]
+                        ##print(string)
+                        if not gotit:
+                            user = eval(string)['entry_data']['ProfilePage'][0]['graphql']['user']
+                            gotit = True
+                    except:
+                        pass
+                    i += 1
 
-                if not gotit:
-                    if detail == "followed_by":
-                        user = {'edge_followed_by': {'count': -1}}
-                        print("Couldn't get follower count")
-                    else:
-                        sys.exit("Didn't find user details")            
-            except:
-                print("wuh woh")
-            else:
-                if detail == 'followed_by':
-                    return user['edge_followed_by']['count']
-                elif detail == 'id':
-                    return user['id']
+            if not gotit:
+                if detail == "followed_by":
+                    user = {'edge_followed_by': {'count': -1}}
+                    print("Couldn't get follower count")
                 else:
-                    return None
+                    sys.exit("Didn't find user details")    
+                    
+            if detail == 'followed_by':
+                return user['edge_followed_by']['count']
+            elif detail == 'id':
+                return user['id']
+            else:
+                return None
     
     
 def create_files(username):
