@@ -37,3 +37,7 @@ For each Instagram account, it keeps the most recent list of followers (`Followe
 ## Running the script
 
 To run the program, run `./run.sh` from the main directory.
+
+## Troubleshooting
+
+Feel free to create an issue: https://github.com/olliechick/instagram-unfollowers/issues/new
