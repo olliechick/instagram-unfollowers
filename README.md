@@ -14,7 +14,9 @@ In `/path/to/logins.txt`, store a dictionary of your login data. For example:
 }
 ````
 
-The program will store reports and follower lists in `path/to/instagram-data/`. If this directory doesn't exist, it will create it (and all neccesary parent directories). The data it stores is organised like this:
+**Note**: you are storing your password in plaintext, so make sure this file is kept in a secure location! If you don't have a secure location to store it, I would recommend not including it. 
+
+The program will store reports and follower lists in `path/to/instagram-data/`. If this directory doesn't exist, it will create it (and all necessary parent directories). The data it stores is organised like this:
 
 * path/to/instagram-data/
   * username
