@@ -4,6 +4,8 @@ from InstagramAPI import InstagramAPI
 from datetime import datetime
 import webbrowser, requests, sys, platform
 import os
+import getpass
+import ast
 
 INPUT_FILENAME = 'input.txt'
 REPORT_FILENAME = 'Report.txt'
@@ -12,23 +14,33 @@ ARCHIVE_DIRNAME = 'archive/'
 
 root_dir = "data/"
 
+
 def getUsername():
     return input("Username: ")
 
+
 def getPassword():
-    return input("Password: ")
+    return getpass.getpass()
+
 
 def extract_str(filename):
     """returns a (stripped) string from file"""
-    myfile = open_file(filename, 'r')
+    try:
+        myfile = open_file(filename, 'r')
+    except FileNotFoundError:
+        return None
     s = myfile.read()
     myfile.close()
     s = s.strip()
     return s
 
+
 def extract_list(filename):
     """returns a list from file"""
-    myfile = open_file(filename, 'r')
+    try:
+        myfile = open_file(filename, 'r')
+    except FileNotFoundError:
+        return None
     s = myfile.read()
     myfile.close
     sanitised_s = ''
@@ -47,13 +59,26 @@ def extract_list(filename):
     l = eval(sanitised_s.strip())
     return l
 
+
 def extract_dict(filename):
     """returns a dictionary from file"""
-    myfile = open_file(filename, 'r')
+    try:
+        myfile = open_file(filename, 'r')
+    except FileNotFoundError:
+        return None
     s = myfile.read()
     myfile.close()
-    d = eval(s)
-    return d    
+    
+    try:
+        d = ast.literal_eval(s)
+    except ValueError:
+        return None
+    
+    if isinstance(d, dict):
+        return d    
+    else:
+        return None
+
 
 def write_to_file(filename, contents):    
     '''Writes contents to file filename'''
@@ -61,9 +86,11 @@ def write_to_file(filename, contents):
     outfile.write(contents)
     outfile.close()
 
+
 def open_file(filename, mode, encoding="utf-8", errors='ignore'):        
     myfile = open(filename, mode, encoding=encoding, errors=errors)
     return myfile
+
 
 def create_files(username):
     '''Checks if the necessary files and directories exists.
@@ -96,6 +123,7 @@ def saveFollowers(followers, username):
     write_to_file(root_dir + username + '/' + ARCHIVE_DIRNAME + filename, str(followers))
     write_to_file(root_dir + username + '/' + FOLLOWERS_FILENAME, str(followers))    
 
+
 def generateFollowers(followersRaw):
     followers = dict()
     for follower in followersRaw:
@@ -112,6 +140,7 @@ def saveReport(report, username):
     
     write_to_file(root_dir + username + '/' + ARCHIVE_DIRNAME + report_filename, report)
     write_to_file(root_dir + username + '/' + REPORT_FILENAME, report)
+
 
 def generateReport(followers, username):
     old_followers = extract_dict(root_dir + username + '/' + FOLLOWERS_FILENAME)
@@ -134,44 +163,90 @@ def generateReport(followers, username):
         contents += '='*5 + ' New followers ' + '='*5 + '\n'
         for uid in new_list:
             contents += followers[uid][0] + ' (' + followers[uid][1] + ')\n'
+        if len(unfollowers) != 0:            
+            contents += "\n"
         
     if len(unfollowers) != 0:
-        contents += '\n' + '='*5 + ' Unfollowers ' + '='*5 + '\n'
+        contents += '='*5 + ' Unfollowers ' + '='*5 + '\n'
         for uid in un_list:
             contents += old_followers[uid][0] + ' (' + old_followers[uid][1] + ')\n'
+        if len(changed_name_users) != 0:
+            contents += "\n"
             
     if len(changed_name_users) != 0:
-        contents += '\n' + '='*5 + ' Changed name ' + '='*5 + '\n'
+        contents += '='*5 + ' Changed name ' + '='*5 + '\n'
         for uid in changed_name_users:
             contents += old_followers[uid][0] + ' (' + old_followers[uid][1] + ') -> '
             contents += followers[uid][0] + ' (' + followers[uid][1] + ')\n'
+            
+    if contents == '':
+        contents = "No change.\n"
     
     return contents
 
 
 def main():
     global root_dir
+    
+    dirs = extract_dict("dirs.txt")
+    if dirs is None or "logins" not in dirs or "data" not in dirs:
+        print("Error: You must create a file in this directory ({}) called `dirs.txt`. " + 
+              "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': 'path/to/data.txt'}`.")
+        return 
+    
+    logins = extract_dict(dirs["logins"])
         
     username = getUsername()
-    password = getPassword() #TODO use config file
-    print("Loading.")
+    if logins is not None and username in logins:
+        password = logins[username]
+    else:
+        password = getPassword()
+    print("\nLoading.")
     api = InstagramAPI(username, password)
     api.login()
     
-    root_dir = extract_str("root_dir.txt")    #TODO ask user
+    try:
+        user_id = api.username_id
+        print("Loaded", user_id)
+    except AttributeError:
+        try:
+            if (api.__dict__['LastJson']['invalid_credentials']):
+                print("Sorry, that username/password combination is invalid. Please try again.\n")
+                main()
+            else:
+                print("Error 41. Please try again.\n")
+                main()
+        except KeyError:
+            try:
+                if (api.__dict__['LastJson']['error_type'] == 'missing_parameters'):
+                    print("Please enter a username and a password.\n")
+                    main()
+                else:
+                    print("Error 39. Please try again.\n")
+                    main()
+            except:
+                print("Error 40. Please try again.\n")
+                main()
+                
+    root_dir = dirs["data"]
     create_files(username)
-
-    user_id = api.username_id
+    print("Files created.")    
+            
     followersRaw = api.getTotalFollowers(user_id)
+    print("Got total followers.")
     
     followers = generateFollowers(followersRaw)
     report = generateReport(followers, username)
+    print("Generated report.")
     
     saveFollowers(followers, username)
     saveReport(report, username)
+    print("Saved report.")
     
+    print ("\n==================================== Report ====================================\n")
     print(report)
-    input()    
+    print   ("================================================================================")
+    input("\nPress return to exit.")    
 
 
 if __name__ == "__main__":
