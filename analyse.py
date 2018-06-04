@@ -189,12 +189,15 @@ def main():
     global root_dir
     
     dirs = extract_dict("dirs.txt")
-    if dirs is None or "logins" not in dirs or "data" not in dirs:
-        print("Error: You must create a file in this directory ({}) called `dirs.txt`. " + 
-              "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': 'path/to/data.txt'}`.")
+    if dirs is None or "data" not in dirs:
+        print("Error: You must create a file in this directory ({}) called `dirs.txt`. ".format(os.path.dirname(os.path.realpath(__file__))) + 
+              "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': 'path/to/instagram-data/'}`.")
         return 
     
-    logins = extract_dict(dirs["logins"])
+    if "login" not in dirs:
+        logins = None
+    else:
+        logins = extract_dict(dirs["logins"])
         
     username = getUsername()
     if logins is not None and username in logins:
