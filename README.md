@@ -20,7 +20,7 @@
 
 **Note**: you are storing your password in plaintext, so make sure this file is kept in a secure location! If you don't have a secure location to store it, I would recommend not including it.
 
-If you enter a username that is not included in this file, you will be prompted to enter your password, otherwise, it will use the password stored in this file.
+If you enter a username that is not included in this file, you will be prompted to enter your password, otherwise, it will use the password stored in this file. To do a bulk run of every login stored in the file, enter `*` as the username.
 
 ## Where the script stores data
 
