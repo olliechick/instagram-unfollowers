@@ -194,7 +194,7 @@ def main():
               "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': 'path/to/instagram-data/'}`.")
         return 
     
-    if "login" not in dirs:
+    if "logins" not in dirs:
         logins = None
     else:
         logins = extract_dict(dirs["logins"])
