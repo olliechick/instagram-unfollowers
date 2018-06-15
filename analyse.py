@@ -233,18 +233,18 @@ def main():
                 
     root_dir = dirs["data"]
     create_files(username)
-    print("Files created.")    
+    ##print("Files created.")    
             
     followersRaw = api.getTotalFollowers(user_id)
-    print("Got total followers.")
+    ##print("Got total followers.")
     
     followers = generateFollowers(followersRaw)
     report = generateReport(followers, username)
-    print("Generated report.")
+    ##print("Generated report.")
     
     saveFollowers(followers, username)
     saveReport(report, username)
-    print("Saved report.")
+    ##print("Saved report.")
     
     print ("\n==================================== Report ====================================\n")
     print(report)
