@@ -200,55 +200,63 @@ def main():
         logins = extract_dict(dirs["logins"])
         
     username = getUsername()
-    if logins is not None and username in logins:
+    if username == "*":
+        pass ## use all logins
+    elif logins is not None and username in logins:
         password = logins[username]
+        logins = {username: password}
     else:
         password = getPassword()
-    print("\nLoading.")
-    api = InstagramAPI(username, password)
-    api.login()
-    
-    try:
-        user_id = api.username_id
-        print("Loaded", user_id)
-    except AttributeError:
+        logins = {username: password}
+        
+    for username in logins:
+        password = logins[username]
+        print("\nLoading {}.".format(username))
+        api = InstagramAPI(username, password)
+        api.login()
+        
         try:
-            if (api.__dict__['LastJson']['invalid_credentials']):
-                print("Sorry, that username/password combination is invalid. Please try again.\n")
-                main()
-            else:
-                print("Error 41. Please try again.\n")
-                main()
-        except KeyError:
+            user_id = api.username_id
+            ##print("Loaded", user_id)
+        except AttributeError:
             try:
-                if (api.__dict__['LastJson']['error_type'] == 'missing_parameters'):
-                    print("Please enter a username and a password.\n")
+                if (api.__dict__['LastJson']['invalid_credentials']):
+                    print("Sorry, that username/password combination is invalid. Please try again.\n")
                     main()
                 else:
-                    print("Error 39. Please try again.\n")
+                    print("Error 41. Please try again.\n")
                     main()
-            except:
-                print("Error 40. Please try again.\n")
-                main()
+            except KeyError:
+                try:
+                    if (api.__dict__['LastJson']['error_type'] == 'missing_parameters'):
+                        print("Please enter a username and a password.\n")
+                        main()
+                    else:
+                        print("Error 39. Please try again.\n")
+                        main()
+                except:
+                    print("Error 40. Please try again.\n")
+                    main()
+                    
+        root_dir = dirs["data"]
+        create_files(username)
+        ##print("Files created.")    
                 
-    root_dir = dirs["data"]
-    create_files(username)
-    ##print("Files created.")    
-            
-    followersRaw = api.getTotalFollowers(user_id)
-    ##print("Got total followers.")
-    
-    followers = generateFollowers(followersRaw)
-    report = generateReport(followers, username)
-    ##print("Generated report.")
-    
-    saveFollowers(followers, username)
-    saveReport(report, username)
-    ##print("Saved report.")
-    
-    print ("\n==================================== Report ====================================\n")
-    print(report)
-    print   ("================================================================================")
+        followersRaw = api.getTotalFollowers(user_id)
+        ##print("Got total followers.")
+        
+        followers = generateFollowers(followersRaw)
+        report = generateReport(followers, username)
+        ##print("Generated report.")
+        
+        saveFollowers(followers, username)
+        saveReport(report, username)
+        ##print("Saved report.")
+        
+        print ("\n==================================== Report ====================================\n")
+        print(report)
+        print   ("================================================================================")
+        
     input("\nPress return to exit.")    
 
 
