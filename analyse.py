@@ -201,7 +201,10 @@ def main():
         
     username = getUsername()
     if username == "*":
-        pass ## use all logins
+        ## use all logins
+        if (logins is None):
+            print("No login data found.")
+            return
     elif logins is not None and username in logins:
         password = logins[username]
         logins = {username: password}
