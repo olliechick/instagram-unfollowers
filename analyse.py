@@ -16,7 +16,13 @@ root_dir = "data/"
 
 
 def getUsername():
-    return input("Username: ")
+    """returns string username, list args"""
+    inputs = input("Username: ")
+    input_list = inputs.split()
+    if len(input_list) == 0:
+        return inputs, []
+    else:
+        return input_list[0], input_list[1:]
 
 
 def getPassword():
@@ -199,7 +205,7 @@ def main():
     else:
         logins = extract_dict(dirs["logins"])
         
-    username = getUsername()
+    username, args = getUsername()
     if username == "*":
         ## use all logins
         if (logins is None):
