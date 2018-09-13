@@ -55,14 +55,14 @@ def create_files(username):
         write_to_file(root_dir + username + '/' + FOLLOWERS_FILENAME, '{}')
 
 
-def saveFollowers(followers, username):
+def save_followers(followers, username):
     current_datetime = datetime.now().strftime('%Y-%m-%d %H%M%S')
     filename = 'Followers at ' + current_datetime + '.txt'
     write_to_file(root_dir + username + '/' + ARCHIVE_DIRNAME + filename, str(followers))
     write_to_file(root_dir + username + '/' + FOLLOWERS_FILENAME, str(followers))
 
 
-def generateFollowers(followersRaw):
+def generate_followers(followersRaw):
     followers = dict()
     for follower in followersRaw:
         uid = str(follower["pk"])
@@ -80,7 +80,7 @@ def save_report(report, username):
     write_to_file(root_dir + username + '/' + REPORT_FILENAME, report)
 
 
-def generate_report(followers, username):
+def generate_text_report(followers, username):
     old_followers = extract_dict(root_dir + username + '/' + FOLLOWERS_FILENAME)
     old_followers_uids = set(old_followers.keys())
     followers_uids = set(followers.keys())
@@ -187,11 +187,11 @@ def main():
         followersRaw = api.getTotalFollowers(user_id)
         ##print("Got total followers.")
 
-        followers = generateFollowers(followersRaw)
-        report = generate_report(followers, username)
+        followers = generate_followers(followersRaw)
+        report = generate_text_report(followers, username)
         ##print("Generated report.")
 
-        saveFollowers(followers, username)
+        save_followers(followers, username)
         save_report(report, username)
         ##print("Saved report.")
 
