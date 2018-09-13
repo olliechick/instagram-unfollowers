@@ -53,4 +53,8 @@ If you enter a username that is not included in your logins file, or you don't h
 
 ## Troubleshooting
 
-Feel free to create an issue: https://github.com/olliechick/instagram-unfollowers/issues/new
+| Problem       | Solution |
+| ------------- |-------------|
+|When I run the program, it says `Fail to import moviepy. Need only for Video upload.`  | This is a print statement that the Instagram API this is built on generates because `moviepy` isn't installed. However, this is not needed for the functionality this program provides (`Need only for Video upload.`), so you can safely ignore it. |
+
+For any other issues, feel free to create an issue: https://github.com/olliechick/instagram-unfollowers/issues/new
