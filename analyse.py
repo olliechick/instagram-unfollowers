@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 
-from InstagramAPI import InstagramAPI
-from datetime import datetime
-import webbrowser, requests, sys, platform
-import os
 import getpass
-import ast
+import os
+from datetime import datetime
+
+from InstagramAPI import InstagramAPI
+
+from file_io import write_to_file, extract_dict
 
 INPUT_FILENAME = 'input.txt'
 REPORT_FILENAME = 'Report.txt'
@@ -15,7 +16,7 @@ ARCHIVE_DIRNAME = 'archive/'
 root_dir = "data/"
 
 
-def getUsername():
+def get_username():
     """returns string username, list args"""
     inputs = input("Username: ")
     input_list = inputs.split()
@@ -25,87 +26,18 @@ def getUsername():
         return input_list[0], input_list[1:]
 
 
-def getPassword():
+def get_password():
     return getpass.getpass()
 
 
-def extract_str(filename):
-    """returns a (stripped) string from file"""
-    try:
-        myfile = open_file(filename, 'r')
-    except FileNotFoundError:
-        return None
-    s = myfile.read()
-    myfile.close()
-    s = s.strip()
-    return s
-
-
-def extract_list(filename):
-    """returns a list from file"""
-    try:
-        myfile = open_file(filename, 'r')
-    except FileNotFoundError:
-        return None
-    s = myfile.read()
-    myfile.close
-    sanitised_s = ''
-    in_double_quotes = False
-    for char in s:
-        if char == '"' and in_double_quotes:
-            in_double_quotes = False
-            sanitised_s += char
-        elif char == '"':
-            in_double_quotes = True
-            sanitised_s += char
-        elif char == "'" and in_double_quotes:
-            sanitised_s += '\\' + "'"
-        else:
-            sanitised_s += char
-    l = eval(sanitised_s.strip())
-    return l
-
-
-def extract_dict(filename):
-    """returns a dictionary from file"""
-    try:
-        myfile = open_file(filename, 'r')
-    except FileNotFoundError:
-        return None
-    s = myfile.read()
-    myfile.close()
-
-    try:
-        d = ast.literal_eval(s)
-    except ValueError:
-        return None
-
-    if isinstance(d, dict):
-        return d
-    else:
-        return None
-
-
-def write_to_file(filename, contents):
-    '''Writes contents to file filename'''
-    outfile = open_file(filename, 'w+', encoding="utf-8")
-    outfile.write(contents)
-    outfile.close()
-
-
-def open_file(filename, mode, encoding="utf-8", errors='ignore'):
-    myfile = open(filename, mode, encoding=encoding, errors=errors)
-    return myfile
-
-
 def create_files(username):
-    '''Checks if the necessary files and directories exists.
+    """Checks if the necessary files and directories exists.
        If they don't, creates them. Necessary files and directories:
        * root_dir
        * root_dir/username/
        * root_dir/username/archive/
        * root_dir/username/Followers.txt
-    '''
+    """
 
     archive = ARCHIVE_DIRNAME
 
@@ -140,7 +72,7 @@ def generateFollowers(followersRaw):
     return followers
 
 
-def saveReport(report, username):
+def save_report(report, username):
     current_datetime = datetime.now().strftime('%Y-%m-%d %H%M%S')
     report_filename = 'Report generated ' + current_datetime + '.txt'
 
@@ -148,7 +80,7 @@ def saveReport(report, username):
     write_to_file(root_dir + username + '/' + REPORT_FILENAME, report)
 
 
-def generateReport(followers, username):
+def generate_report(followers, username):
     old_followers = extract_dict(root_dir + username + '/' + FOLLOWERS_FILENAME)
     old_followers_uids = set(old_followers.keys())
     followers_uids = set(followers.keys())
@@ -206,7 +138,7 @@ def main():
     else:
         logins = extract_dict(dirs["logins"])
 
-    username, args = getUsername()
+    username, args = get_username()
     if username == "*":
         ## use all logins
         if (logins is None):
@@ -216,7 +148,7 @@ def main():
         password = logins[username]
         logins = {username: password}
     else:
-        password = getPassword()
+        password = get_password()
         logins = {username: password}
 
     for username in logins:
@@ -256,11 +188,11 @@ def main():
         ##print("Got total followers.")
 
         followers = generateFollowers(followersRaw)
-        report = generateReport(followers, username)
+        report = generate_report(followers, username)
         ##print("Generated report.")
 
         saveFollowers(followers, username)
-        saveReport(report, username)
+        save_report(report, username)
         ##print("Saved report.")
 
         print("\n==================================== Report ====================================\n")
