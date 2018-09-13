@@ -68,4 +68,3 @@ def write_to_file(filename, contents):
 def open_file(filename, mode, encoding="utf-8", errors='ignore'):
     myfile = open(filename, mode, encoding=encoding, errors=errors)
     return myfile
-
