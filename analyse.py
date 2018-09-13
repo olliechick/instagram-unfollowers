@@ -110,7 +110,7 @@ def generate_html_report(followers, username):
 <html>
   <head>
    <style>
-   
+      table { border-collapse: collapse; }   
       th {
         padding-top: 12px;
         padding-bottom: 12px;
@@ -122,13 +122,13 @@ def generate_html_report(followers, username):
       }
       
       #good th { background-color: #03a022; }
-      #good tr:nth-child(even){ background-color: #effff2; }
+	  #good tr:hover {background-color: #effff2;}
       
       #bad th { background-color: #e50b00; }
-      #bad tr:nth-child(even){ background-color: #ffefef; }
+      #bad tr:hover { background-color: #ffefef; }
       
       #neutral th { background-color: #015fa8; }
-      #neutral tr:nth-child(even){ background-color: #eff8ff; }
+      #neutral tr:hover { background-color: #eff8ff; }
       
     </style>
   </head>
