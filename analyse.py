@@ -2,6 +2,7 @@
 
 import getpass
 import os
+import webbrowser
 from datetime import datetime
 
 from InstagramAPI import InstagramAPI
@@ -77,7 +78,9 @@ def save_report(report, username, filetype):
     archive_report_filename = 'Report generated ' + current_datetime + '.' + filetype
 
     write_to_file(root_dir + username + '/' + ARCHIVE_DIRNAME + archive_report_filename, report)
-    write_to_file(root_dir + username + '/' + REPORT_FILENAME + '.' + filetype, report)
+    filename = root_dir + username + '/' + REPORT_FILENAME + '.' + filetype
+    write_to_file(filename, report)
+    return filename
 
 
 def generate_changed_followers(followers, username):
@@ -150,7 +153,7 @@ def generate_html_report(followers, username):
         for uid in new_list:
             contents += '  <tr>\n' \
                         '    <td>' + generate_ig_link(followers[uid][0]) + '</td> <td>' + followers[uid][1] + '</td>\n' \
-                                                                                            '  </tr>\n'
+                                                                                                              '  </tr>\n'
 
         contents += "</table>\n\n"
 
@@ -161,7 +164,8 @@ def generate_html_report(followers, username):
                     '<table id="bad"\n' + table_headings
         for uid in unfollowers_list:
             contents += '  <tr>\n' \
-                        '    <td>' + generate_ig_link(old_followers[uid][0]) + '</td> <td>' + old_followers[uid][1] + '</td>\n'
+                        '    <td>' + generate_ig_link(old_followers[uid][0]) + '</td> <td>' + old_followers[uid][
+                            1] + '</td>\n'
 
         contents += "</table>\n\n"
 
@@ -179,7 +183,7 @@ def generate_html_report(followers, username):
             contents += '  <tr>\n' \
                         '    <td>' + old_followers[uid][0] + '</td> <td>' + old_followers[uid][1] + '</td> <td>' \
                         + generate_ig_link(followers[uid][0]) + '</td> <td>' + followers[uid][1] + '</td>\n' \
-                                                                                 '  </tr>\n'
+                                                                                                   '  </tr>\n'
 
         contents += "</table>\n\n"
 
@@ -259,29 +263,26 @@ def main():
         try:
             user_id = api.username_id
             ##print("Loaded", user_id)
+
         except AttributeError:
             try:
                 if (api.__dict__['LastJson']['invalid_credentials']):
                     print("Sorry, that username/password combination is invalid. Please try again.\n")
-                    main()
                 else:
                     print("Error 41. Please try again.\n")
-                    main()
             except KeyError:
                 try:
                     if (api.__dict__['LastJson']['error_type'] == 'missing_parameters'):
                         print("Please enter a username and a password.\n")
-                        main()
                     else:
                         print("Error 39. Please try again.\n")
-                        main()
                 except:
                     print("Error 40. Please try again.\n")
-                    main()
+            return
 
         root_dir = dirs["data"]
         create_files(username)
-        ##print("Files created.")    
+        ##print("Files created.")
 
         followersRaw = api.getTotalFollowers(user_id)
         ##print("Got total followers.")
@@ -293,12 +294,14 @@ def main():
 
         save_followers(followers, username)
         save_report(text_report, username, 'txt')
-        save_report(html_report, username, 'html')
+        html_filename = save_report(html_report, username, 'html')
         ##print("Saved report.")
 
         print("\n==================================== Report ====================================\n")
         print(text_report)
         print("================================================================================")
+        webbrowser.open('file://' + html_filename)
+        print(html_filename)
 
     input("\nPress return to exit.")
 
