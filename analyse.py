@@ -149,10 +149,11 @@ def generate_html_report(followers, username):
 
         for uid in new_list:
             contents += '  <tr>\n' \
-                        '    <td>' + generate_ig_link(followers[uid][0]) + '</td> <td>' + followers[uid][1] + '</td>\n' \
-                                                                                            '  </tr>\n'
+                        '    <td>' + generate_ig_link(followers[uid][0]) + '</td>\n' + \
+                        '    <td>' + followers[uid][1] + '</td>\n' + \
+                        '  </tr>\n'
 
-        contents += "</table>\n\n"
+    contents += "</table>\n\n"
 
     # Unfollowers
 
@@ -161,7 +162,9 @@ def generate_html_report(followers, username):
                     '<table id="bad"\n' + table_headings
         for uid in unfollowers_list:
             contents += '  <tr>\n' \
-                        '    <td>' + generate_ig_link(old_followers[uid][0]) + '</td> <td>' + old_followers[uid][1] + '</td>\n'
+                        '    <td>' + generate_ig_link(old_followers[uid][0]) + '</td>\n' + \
+                        '    <td>' + old_followers[uid][1] + '</td>\n' + \
+                        '  </tr>\n'
 
         contents += "</table>\n\n"
 
@@ -177,9 +180,11 @@ def generate_html_report(followers, username):
                                                '  </tr>\n'
         for uid in changed_name_users:
             contents += '  <tr>\n' \
-                        '    <td>' + old_followers[uid][0] + '</td> <td>' + old_followers[uid][1] + '</td> <td>' \
-                        + generate_ig_link(followers[uid][0]) + '</td> <td>' + followers[uid][1] + '</td>\n' \
-                                                                                 '  </tr>\n'
+                        '    <td>' + old_followers[uid][0] + '</td>\n' + \
+                        '    <td>' + old_followers[uid][1] + '</td>\n' + \
+                        '    <td>' + generate_ig_link(followers[uid][0]) + '</td>\n' + \
+                        '    <td>' + followers[uid][1] + '</td>\n' + \
+                        '  </tr>\n'
 
         contents += "</table>\n\n"
 
