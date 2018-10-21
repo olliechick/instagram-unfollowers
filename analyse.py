@@ -112,6 +112,7 @@ def generate_html_report(followers, username):
 <!DOCTYPE html>
 <html>
   <head>
+  <title>Report for """ + username + """</title>
    <style>
       table { border-collapse: collapse; }   
       th {
@@ -156,7 +157,7 @@ def generate_html_report(followers, username):
                         '    <td>' + followers[uid][1] + '</td>\n' + \
                         '  </tr>\n'
 
-    contents += "</table>\n\n"
+        contents += "</table>\n\n"
 
     # Unfollowers
 
@@ -192,7 +193,7 @@ def generate_html_report(followers, username):
         contents += "</table>\n\n"
 
     if contents == header:
-        contents = "No change.\n"
+        contents += 'No change.\n</body>\n</html>'
     else:
         contents += '</body></html>'
 
@@ -237,7 +238,7 @@ def main():
     if dirs is None or "data" not in dirs:
         print("Error: You must create a file in this directory ({}) called `dirs.txt`. ".format(
             os.path.dirname(os.path.realpath(__file__))) +
-              "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': 'path/to/instagram-data/'}`.")
+              "This must contain a dictionary, in the form `{'logins': '/path/to/logins.txt', 'data': '/path/to/instagram-data/'}`.")
         return
 
     if "logins" not in dirs:
