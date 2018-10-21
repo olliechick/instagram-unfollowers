@@ -1,6 +1,12 @@
+# Instagram unfollowers
+
+This is a script you can use to monitor who unfollows you on Instagram. It also shows who follows you, and which of your followers have changed their name.
+
+Note that it does this by comparing who currently follows you with who followed you the last time you ran the script - it can't calculate historic data. It is also oblivious to anyone who unfollowed you, then re-followed you before you ran the script again.
+
 ## Before running the script for the first time
 
-Run `./install_dependencies.sh` to install the relevant dependencies (and enter `y` if prompted; this may happen multiple times). If you want to see what commands this runs, run `cat install_dependencies.sh`.
+Run `./install_dependencies.sh` to install the relevant dependencies (and enter `y` if prompted; this may happen multiple times). If you want to see what commands this runs, run `cat install_dependencies.sh | tail -n +3`.
 
 Run `./generate_dirs.py` to run the wizard that takes you through setting up where you store your files, and optionally, where you store your logins, and what your login details are. It then stores this data in `dirs.txt`, and your login details in the file whose path you provide.
 
@@ -13,12 +19,14 @@ The program will store reports and follower lists in the directory referenced in
 * `path/provided/`
   * `username/`
     * `Followers.txt`
+    * `Report.html`
     * `Report.txt`
     * `archive/`
       * `Followers at yyyy-mm-dd hhmmss.txt`
+      * `Report generated yyyy-mm-dd hhmmss.html`
       * `Report generated yyyy-mm-dd hhmmss.txt`
       
-For each Instagram account, it keeps the most recent list of followers (`Followers.txt`) and report generated (`Report.txt`), as well as an archive of the follower list and report from each time the script was run.
+For each Instagram account, it keeps the most recent list of followers (`Followers.txt`) and reports generated (`Report.txt` and `Report.html`), as well as an archive of the follower list and reports from each time the script was run.
 
 ## Running the script
 
