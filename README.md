@@ -28,7 +28,7 @@ The program will store reports and follower lists in the directory referenced in
       
 For each Instagram account, it keeps the most recent list of followers (`Followers.txt`) and reports generated (`Report.txt` and `Report.html`), as well as an archive of the follower list and reports from each time the script was run.
 
-See [`doc/Example report.html`](../master/doc/Example report.html) for an example of the generated report.
+See [doc/Example report.html](../master/doc/Example%20report.html) for an example of the generated report.
 
 ## Running the script
 
